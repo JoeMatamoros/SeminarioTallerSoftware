@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
     });
 });
 
+// TRAER TODOS LOS REGISTROS
 router.get('/all', async(req, res) => {
     try {
         const rows = await expedienteModel.getAll();
@@ -20,8 +21,9 @@ router.get('/all', async(req, res) => {
         console.log(ex);
         res.status(500).json({ status: 'FAILED' });
     }
-}); // GET ALL
+}); 
 
+// GET INDIVIDUAL, UN UNICO REGISTRO POR ID
 router.get('/byid/:id', async(req, res) => {
     try {
         const { id } = req.params;
@@ -31,17 +33,11 @@ router.get('/byid/:id', async(req, res) => {
         console.log(ex);
         res.status(500).json({ status: 'EL ID NO EXISTE' });
     }
-}); // GET INDIVIDUAL
+}); 
 
+//INSERTAR UN NUEVO REGISTRO
 router.post('/new', async(req, res) => {
-    const {
-        identidad,
-        fecha,
-        descripcion,
-        observacion,
-        registros,
-        ultimaActualizacion
-    } = req.body;
+    const { identidad, fecha, descripcion, observacion, registros, ultimaActualizacion } = req.body;
 
     rslt = await expedienteModel.new(identidad, fecha, descripcion, observacion, registros, ultimaActualizacion);
 
@@ -56,19 +52,12 @@ router.post('/new', async(req, res) => {
             ultimaActualizacion
         }
     });
-}); //POST /new
+});
 
+//ACTUALIZAR
 router.put('/update/:id', async(req, res) => {
     try {
-        const {
-            identidad,
-            fecha,
-            descripcion,
-            observacion,
-            registros,
-            ultimaActualizacion
-        } = req.body;
-
+        const { identidad,fecha, descripcion, observacion, registros, ultimaActualizacion } = req.body;
         const { id } = req.params;
         const result = await expedienteModel.updateOne(id, identidad, fecha, descripcion, observacion, registros, ultimaActualizacion);
         res.status(200).json({
@@ -81,6 +70,7 @@ router.put('/update/:id', async(req, res) => {
     }
 });
 
+//ELIMINAR DE LA BD
 router.delete('/delete/:id', async(req, res) => {
     try {
         const { id } = req.params;

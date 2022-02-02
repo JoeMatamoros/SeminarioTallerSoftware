@@ -10,8 +10,7 @@ class Expedientes {
                     const createStatement = 'CREATE TABLE IF NOT EXISTS expedientes (id INTEGER PRIMARY KEY AUTOINCREMENT, identidad TEXT, fecha TEXT, descripcion TEXT, observacion TEXT, registros INTEGER, ultimaActualizacion TEXT);';
                     db.run(createStatement);
                 }
-            })
-            .catch((err) => { console.error(err) });
+            }).catch((err) => { console.error(err) });
     }
 
     new(identidad, fecha, descripcion, observacion, registros, ultimaActualizacion) {
