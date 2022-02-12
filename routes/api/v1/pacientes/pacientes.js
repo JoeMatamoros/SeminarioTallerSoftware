@@ -4,14 +4,16 @@ const router = express.Router();
 const Pacientes = new require('../../../../dao/pacientes/pacientes.model');
 const pacienteModel = new Pacientes();
 
+//GET 
 router.get('/', (req, res) => {
     res.status(200).json({
         endpoint: 'Pacientes',
         updates: new Date(2022, 0, 19, 18, 41, 00),
         author: 'José Ordoñez en pacientes'
     });
-}); //GET /
+}); 
 
+// GET ALL
 router.get('/all', async(req, res) => {
     try {
         const rows = await pacienteModel.getAll();
@@ -20,8 +22,9 @@ router.get('/all', async(req, res) => {
         console.log(ex);
         res.status(500).json({ status: 'FAILED' });
     }
-}); // GET ALL
+}); 
 
+// GET INDIVIDUAL
 router.get('/byid/:id', async(req, res) => {
     try {
         const { id } = req.params;
@@ -31,36 +34,31 @@ router.get('/byid/:id', async(req, res) => {
         console.log(ex);
         res.status(500).json({ status: 'EL ID NO EXISTE' });
     }
-}); // GET INDIVIDUAL
+}); 
 
+//POST /new
 router.post('/new', async(req, res) => {
-    const {nombre, apellidos, identidad, email, telefono } = req.body;
+    const {nombres, apellidos, identidad, email, telefono } = req.body;
 
-    rslt = await pacienteModel.new(nombre, apellidos, identidad, telefono, email);
+    rslt = await pacienteModel.new(nombres, apellidos, identidad, telefono, email);
 
     res.status(200).json({
         status: 'OK',
         recieved: {
-            nombre,
+            nombres,
             apellidos,
-            nombrecompleto: `${nombre} ${apellidos}`,
+            nombrecompleto: `${nombres} ${apellidos}`,
             identidad,
             email,
             telefono
         }
     });
-}); //POST /new
+}); 
 
+//ACTUALIZAR
 router.put('/update/:id', async(req, res) => {
     try {
-        const {
-            nombre,
-            apellidos,
-            identidad,
-            email,
-            telefono
-        } = req.body;
-
+        const { nombre, apellidos, identidad, email, telefono } = req.body;
         const { id } = req.params;
         const result = await pacienteModel.updateOne(id, nombre, apellidos, identidad, email, telefono);
         res.status(200).json({
@@ -73,6 +71,7 @@ router.put('/update/:id', async(req, res) => {
     }
 });
 
+//ELIMINAR
 router.delete('/delete/:id', async(req, res) => {
     try {
         const { id } = req.params;
