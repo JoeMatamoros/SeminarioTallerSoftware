@@ -27,7 +27,7 @@ router.get('/all', async(req, res) => {
 router.get('/byid/:id', async(req, res) => {
     try {
         const { id } = req.params;
-        const row = await expedienteModel.getById(parseInt(id));
+        const row = await expedienteModel.getById(id);
         res.status(200).json({ status: 'OK', expediente: row });
     } catch (ex) {
         console.log(ex);

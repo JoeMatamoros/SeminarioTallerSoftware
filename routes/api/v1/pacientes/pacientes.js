@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     });
 }); 
 
-// GET ALL
+// GET TODOS LOS DATOS DE LA DB
 router.get('/all', async(req, res) => {
     try {
         const rows = await pacienteModel.getAll();
@@ -28,7 +28,7 @@ router.get('/all', async(req, res) => {
 router.get('/byid/:id', async(req, res) => {
     try {
         const { id } = req.params;
-        const row = await pacienteModel.getById(parseInt(id));
+        const row = await pacienteModel.getById(id);
         res.status(200).json({ status: 'OK', paciente: row });
     } catch (ex) {
         console.log(ex);
@@ -40,7 +40,7 @@ router.get('/byid/:id', async(req, res) => {
 router.post('/new', async(req, res) => {
     const {nombres, apellidos, identidad, email, telefono } = req.body;
 
-    rslt = await pacienteModel.new(nombres, apellidos, identidad, telefono, email);
+    rslt = await pacienteModel.new(nombres, apellidos, identidad, email,telefono);
 
     res.status(200).json({
         status: 'OK',
@@ -58,9 +58,9 @@ router.post('/new', async(req, res) => {
 //ACTUALIZAR
 router.put('/update/:id', async(req, res) => {
     try {
-        const { nombre, apellidos, identidad, email, telefono } = req.body;
+        const { nombres, apellidos, identidad, email, telefono } = req.body;
         const { id } = req.params;
-        const result = await pacienteModel.updateOne(id, nombre, apellidos, identidad, email, telefono);
+        const result = await pacienteModel.updateOne(id, nombres, apellidos, identidad, email, telefono);
         res.status(200).json({
             status: 'ok',
             result
@@ -85,8 +85,5 @@ router.delete('/delete/:id', async(req, res) => {
         res.status(500).json({ status: 'FAILED' });
     }
 });
-
-
-
 
 module.exports = router;

@@ -1,97 +1,57 @@
-const getDb = require('../db');
+const ObjectId = require('mongodb').ObjectId;
+const getDb = require('../mongodb');
 let db = null;
 class Expedientes {
-
+    collections = null;
     constructor() {
         getDb()
-            .then((database) => {
-                db = database;
-                if (process.env.MIGRATE === 'true') {
-                    const createStatement = 'CREATE TABLE IF NOT EXISTS expedientes (id INTEGER PRIMARY KEY AUTOINCREMENT, identidad TEXT, fecha TEXT, descripcion TEXT, observacion TEXT, registros INTEGER, ultimaActualizacion TEXT);';
-                    db.run(createStatement);
-                }
-            }).catch((err) => { console.error(err) });
-    }
-
-    new(identidad, fecha, descripcion, observacion, registros, ultimaActualizacion) {
-        return new Promise((accept, reject) => {
-            db.run(
-                'INSERT INTO expedientes (identidad, fecha, descripcion, observacion, registros, ultimaActualizacion) VALUES (?, ?, ?, ?, ?, ?);', [identidad, fecha, descripcion, observacion, registros, ultimaActualizacion],
-                (err, rslt) => {
-                    if (err) {
-                        console.error(err);
-                        reject(err);
-                    }
-                    accept(rslt);
-                }
-            );
-        });
-    }
-
-    getAll() {
-        return new Promise((accept, reject) => {
-            db.all('SELECT * from expedientes;', (err, rows) => {
-                if (err) {
-                    console.error(err);
-                    reject(err);
-                } else {
-                    accept(rows);
-                }
-            });
-        });
-    }
-
-    getById(id) {
-        return new Promise((accept, reject) => {
-            db.get('SELECT * from expedientes where id=?;', [id],
-                (err, row) => {
-                    if (err) {
-                        console.error(err);
-                        reject(err);
-                    } else {
-                        accept(row);
-                    }
-                });
-        });
-    }
-
-    updateOne(id, identidad, fecha, descripcion, observacion, registros, ultimaActualizacion) {
-        return new Promise(
-            (accept, reject) => {
-                const sqlUpdate = 'UPDATE expedientes set identidad= ?, fecha= ?, descripcion= ?, observacion= ?, registros= ?, ultimaActualizacion= ? where id= ?;';
-                db.run(
-                    sqlUpdate, [identidad, fecha, descripcion, observacion, registros, ultimaActualizacion, id],
-                    function(err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            accept(this);
-                        }
-                    }
-                );
+        .then((database) => {
+            db = database;
+            this.collections = db.collection('Expedientes');
+            if (process.env.MIGRATE === 'true') {
+                
             }
-
-        );
+        }).catch((err) => { console.error(err) });
     }
 
-    deleteOne(id) {
-        return new Promise(
-            (accept, reject) => {
-                const sqlDelete = 'DELETE FROM expedientes where id=?;'
-                db.run(
-                    sqlDelete, [id],
-                    function(err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            accept(this);
-                        }
-                    }
-                );
-            }
-
-        );
+   /*  async new(nombres, apellidos, identidad, email,telefono) {
+        const newPaciente = { nombres, apellidos, identidad, email,telefono };
+        const rslt = await this.collections.insert(newPaciente);
+        return rslt;
     }
+    */
+   /*Insertar Registro en MongoDb*/
+    async new (identidad, fecha, descripcion,observacion,registros,ultimaActualizacion){
+        const newExpediente = {identidad, fecha, descripcion, observacion, registros, ultimaActualizacion};
+        const rslt = await this.collections.insert(newExpediente);
+        return rslt;
+    }
+
+    /*Traer todos los registros en MongoDb */
+    async getAll() {
+        const cursor = this.collections.find({});
+        const documents = await cursor.toArray();
+        return documents;
+    }
+
+    async getById(id){
+        const _id= new ObjectId(id);
+        const filter = {_id};
+        const myDocument= this.collections.findOne(filter);
+        return myDocument;
+    }
+
+    async updateOne(id, identidad, fecha, descripcion,observacion,registros,ultimaActualizacion){
+        const filter = {_id: new ObjectId(id) };
+        const updateCmd = {'$set':{identidad, fecha, descripcion, observacion, registros, ultimaActualizacion}};
+        return await this.collections.updateOne(filter, updateCmd);
+    }
+
+    async deleteOne(id){
+        const filter = {_id: new ObjectId(id) };
+        return await this.collections.deleteOne(filter);
+    }
+
 }
 
 module.exports = Expedientes;
