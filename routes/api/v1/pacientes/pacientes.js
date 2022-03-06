@@ -16,6 +16,7 @@ router.get('/', (req, res) => {
 // GET TODOS LOS DATOS DE LA DB
 router.get('/all', async(req, res) => {
     try {
+        console.log('User request', req.user);
         const rows = await pacienteModel.getAll();
         res.status(200).json({ status: 'OK', Pacientes: rows });
     } catch (ex) {

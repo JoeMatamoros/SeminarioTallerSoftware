@@ -13,13 +13,6 @@ class Expedientes {
             }
         }).catch((err) => { console.error(err) });
     }
-
-   /*  async new(nombres, apellidos, identidad, email,telefono) {
-        const newPaciente = { nombres, apellidos, identidad, email,telefono };
-        const rslt = await this.collections.insert(newPaciente);
-        return rslt;
-    }
-    */
    /*Insertar Registro en MongoDb*/
     async new (identidad, fecha, descripcion,observacion,registros,ultimaActualizacion){
         const newExpediente = {identidad, fecha, descripcion, observacion, registros, ultimaActualizacion};
@@ -41,7 +34,7 @@ class Expedientes {
         return myDocument;
     }
 
-    async updateOne(id, identidad, fecha, descripcion,observacion,registros,ultimaActualizacion){
+    async updateOne(id, identidad, fecha, descripcion, observacion, registros, ultimaActualizacion){
         const filter = {_id: new ObjectId(id) };
         const updateCmd = {'$set':{identidad, fecha, descripcion, observacion, registros, ultimaActualizacion}};
         return await this.collections.updateOne(filter, updateCmd);
